@@ -1,0 +1,353 @@
+/* Estilo global */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #e8f5e9; /* Fondo principal verde suave */
+    color: #212121; /* Texto oscuro */
+    margin: 0;
+    padding: 0;
+}
+
+/* Encabezado principal */
+h1, h2, h3, h4, h5, h6 {
+    color: #43a047; /* Verde oscuro para títulos */
+    font-weight: bold;
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: #c8e6c9 !important; /* Verde claro para la barra lateral */
+    border-right: 1px solid #43a047; /* Borde verde oscuro */
+}
+
+/* Botones */
+button {
+    background-color: #4CAF50 !important; /* Verde oscuro */
+    color: white !important;
+    border-radius: 8px;
+    padding: 10px 20px;
+    transition: all 0.3s ease-in-out; /* Animación suave */
+}
+
+button:hover {
+    background-color: #45a049 !important; /* Verde más oscuro al pasar el cursor */
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+}
+
+/* Tarjetas de métricas */
+div[data-testid="metric-container"] {
+    background-color: #ffffff; /* Fondo blanco */
+    border: 1px solid #43a047; /* Borde verde */
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    transition: all 0.3s ease-in-out; /* Animación suave */
+}
+
+div[data-testid="metric-container"]:hover {
+    transform: translateY(-2px); /* Levanta ligeramente al pasar el cursor */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+}
+
+/* Gráficas */
+.stPlotlyChart {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Expander */
+div[data-baseweb="accordion"] {
+    background-color: #ffffff;
+    border: 1px solid #43a047;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+div[data-baseweb="accordion"]:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Animaciones generales */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+div[data-testid="stVerticalBlock"] {
+    animation: fadeIn 1s ease-in-out;
+}
+
+.stPlotlyChart {
+    transition: transform 0.3s ease-in-out;
+}
+
+.stPlotlyChart:hover {
+    transform: scale(1.02); /* Amplía ligeramente al pasar el cursor */
+}
+
+/* Estilo para la tabla */
+.stDataFrame {
+    background-color: #ffffff; /* Fondo blanco */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+}
+
+.stDataFrame:hover {
+    transform: translateY(-2px); /* Levanta ligeramente al pasar el cursor */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+}
+
+/* Animación de entrada */
+@keyframes fadeInTable {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stDataFrame {
+    animation: fadeInTable 1s ease-in-out;
+}
+
+/* Colores dinámicos para las celdas */
+td[data-testid="st dataframe cell"]:has(> div[style*="color: red"]) {
+    background-color: rgba(255, 0, 0, 0.2) !important;
+}
+
+td[data-testid="st dataframe cell"]:has(> div[style*="color: orange"]) {
+    background-color: rgba(255, 165, 0, 0.2) !important;
+}
+
+td[data-testid="st dataframe cell"]:has(> div[style*="color: green"]) {
+    background-color: rgba(0, 255, 0, 0.2) !important;
+}
+
+/* Efecto hover para las tarjetas */
+div[data-testid="metric-container"] {
+    background-color: #ffffff; /* Fondo blanco */
+    border: 1px solid #43a047; /* Borde verde */
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    transition: all 0.3s ease-in-out;
+}
+
+div[data-testid="metric-container"]:hover {
+    transform: translateY(-2px); /* Levanta ligeramente al pasar el cursor */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+}
+
+/* Animación de entrada */
+@keyframes fadeInMetrics {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+div[data-testid="metric-container"] {
+    animation: fadeInMetrics 1s ease-in-out;
+}
+
+/* Tarjetas para sensores */
+.sensor-card {
+    background-color: #ffffff; /* Fondo blanco */
+    border: 1px solid #43a047; /* Borde verde */
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    transition: all 0.3s ease-in-out;
+}
+
+.sensor-card:hover {
+    transform: translateY(-2px); /* Levanta ligeramente al pasar el cursor */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+}
+
+/* Animación de zoom para tarjetas */
+.summary-card, .sensor-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.summary-card:hover, .sensor-card:hover {
+    transform: scale(1.05); /* Amplía ligeramente al pasar el cursor */
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
+}
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Animación de entrada */
+@keyframes fadeInCards {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sensor-card {
+    animation: fadeInCards 1s ease-in-out;
+}
+
+.summary-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.summary-card:hover {
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño al pasar el mouse */
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
+}
+
+
+.scroll-container:hover {
+    overflow-x: auto; /* Muestra el scroll al hacer hover */
+}
+
+/* Styling for the scrollbar */
+.scroll-container::-webkit-scrollbar {
+    height: 8px; /* Altura del scroll horizontal */
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background-color: #43a047;
+    border-radius: 10px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+    background-color: #e0fae1;
+}
+
+.scroll-container .plotly-chart:hover {
+    transform: scale(1.05); /* Amplía ligeramente al pasar el cursor */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+}
+
+/* Contenedor principal con scroll vertical */
+#scrollable-container {
+    max-height: 80vh; /* Limita la altura al 80% del viewport */
+    overflow-y: auto; /* Activa el scroll vertical */
+    scroll-behavior: smooth; /* Scroll suave */
+    padding-right: 10px; /* Espaciado a la derecha */
+}
+
+/* Estilo del scrollbar para navegadores WebKit */
+#scrollable-container::-webkit-scrollbar {
+    width: 8px; /* Ancho del scroll vertical */
+}
+
+#scrollable-container::-webkit-scrollbar-thumb {
+    background-color: #43a047; /* Color del scroll */
+    border-radius: 4px; /* Bordes redondeados */
+}
+
+#scrollable-container::-webkit-scrollbar-track {
+    background-color: #e8f5e9; /* Color de fondo del track */
+}
+
+/* Estilo para las gráficas dentro del contenedor */
+.chart-container {
+    scroll-snap-align: start; /* Alinea cada gráfica al inicio al desplazarse */
+    margin-bottom: 20px; /* Espaciado entre gráficas */
+    border-radius: 10px; /* Bordes redondeados */
+    overflow: hidden; /* Oculta contenido desbordado */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.chart-container:hover {
+    transform: scale(1.05); /* Amplía ligeramente al pasar el cursor */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+}
+
+/* Títulos con scroll y animaciones suaves */
+.scroll-title {
+    font-size: 1.5rem; /* Tamaño del título */
+    font-weight: bold;
+    color: #333;
+    background-color: #e8f5e9; /* Fondo verde claro */
+    border-radius: 12px; /* Bordes redondeados */
+    padding: 10px 15px; /* Espaciado interno */
+    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.2), -8px -8px 15px rgba(255, 255, 255, 0.7); /* Neumorfismo */
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    margin-bottom: 10px; /* Espaciado entre títulos */
+}
+
+.scroll-title:hover {
+    color: #007BFF; /* Cambia el color del texto al pasar el cursor */
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+    box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.2), inset -4px -4px 8px rgba(255, 255, 255, 0.7); /* Neumorfismo invertido */
+}
+
+/* Títulos de módulos con hover */
+.module-title {
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.module-title:hover {
+    color: #007BFF; /* Cambia el color al pasar el cursor */
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+}
+
+/* Animación de zoom para tarjetas */
+.card-zoom {
+    animation: zoomIn 0.5s ease-in-out;
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.1);
+    }
+}
+
+/* Gráficas con hover */
+.graph-title {
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.graph-title:hover {
+    color: #FF5733; /* Cambia el color al pasar el cursor */
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+}
