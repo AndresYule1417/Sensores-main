@@ -22,3 +22,40 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.log
+
+# Streamlit
+.streamlit/
+
+# Entornos virtuales
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+
+# Archivos de sistema y usuario
+.DS_Store
+Thumbs.db
+*.bak
+*.swp
+*.swo
+
+# Archivos de configuración de VSCode
+.vscode/
+
+# Archivos de usuario de Windows
+*.lnk
+
+# OneDrive y carpetas de usuario
+/OneDrive*/
