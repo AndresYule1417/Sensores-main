@@ -293,12 +293,14 @@ df = filter_data_by_time(df, time_range)
 
 # Renombrar columnas para mostrar encabezados personalizados
 columnas_personalizadas = {
+    "device": "Dispositivo",
     "lux": "Luminosidad",
     "nh3": "Amoniaco",
     "hs": "Sulfuro de hidrógeno",
     "h": "Humedad",
     "t": "Temperatura",
-    "time": "Fecha y hora"
+    "time": "Fecha y hora",
+    "row_num": "N° Lectura"
 }
 df_mostrar = df.rename(columns=columnas_personalizadas)
 
@@ -367,12 +369,14 @@ def main():
             """)
             # Renombrar columnas para mostrar encabezados personalizados
             columnas_personalizadas = {
+                "device": "Dispositivo",
                 "lux": "Luminosidad",
                 "nh3": "Amoniaco",
                 "hs": "Sulfuro de hidrógeno",
                 "h": "Humedad",
                 "t": "Temperatura",
-                "time": "Fecha y hora"
+                "time": "Fecha y hora",
+                "row_num": "N° Lectura"
             }
             df_mostrar = df.rename(columns=columnas_personalizadas)
 
@@ -484,7 +488,7 @@ def main():
                             opt_range = SENSOR_RANGES[sensor]
                             time_list = device_df['time'].tolist()
                             optimal_max = [opt_range['optimal_max']] * len(time_list)
-                            optimal_min = [opt_range['optimal_min']] * len(time_list)
+                            optimal_min = [opt_range['optimal_min']] * len(time_list)[::-1]
                             # Crear traza principal
                             trace = go.Scatter(
                                 x=device_df['time'],
