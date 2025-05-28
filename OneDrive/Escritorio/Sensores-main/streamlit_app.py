@@ -291,6 +291,17 @@ df = get_latest_data()
 # Filtrar los datos según la selección del tiempo
 df = filter_data_by_time(df, time_range)
 
+# Renombrar columnas para mostrar encabezados personalizados
+columnas_personalizadas = {
+    "lux": "Luminosidad",
+    "nh3": "Amoniaco",
+    "hs": "Sulfuro de hidrógeno",
+    "h": "Humedad",
+    "t": "Temperatura",
+    "time": "Fecha y hora"
+}
+df_mostrar = df.rename(columns=columnas_personalizadas)
+
 # Indicador de estado general
 overall_status = calculate_overall_status(df)
 st.sidebar.markdown("### Estado General del Galpón🛖")
@@ -354,8 +365,20 @@ def main():
             🔶Esta tabla muestra los 12 registros más recientes de todos los sensores. 
             Cada fila representa una lectura de un módulo en un momento específico.
             """)
+            # Renombrar columnas para mostrar encabezados personalizados
+            columnas_personalizadas = {
+                "lux": "Luminosidad",
+                "nh3": "Amoniaco",
+                "hs": "Sulfuro de hidrógeno",
+                "h": "Humedad",
+                "t": "Temperatura",
+                "time": "Fecha y hora"
+            }
+            df_mostrar = df.rename(columns=columnas_personalizadas)
+
+            # Mostrar la tabla con los nuevos encabezados
             st.dataframe(
-                df,
+                df_mostrar,
                 use_container_width=True,
                 hide_index=True
             )
