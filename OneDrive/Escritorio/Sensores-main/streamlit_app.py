@@ -488,18 +488,8 @@ def main():
                             opt_range = SENSOR_RANGES[sensor]
                             time_list = device_df['time'].tolist()
                             optimal_max = [opt_range['optimal_max']] * len(time_list)
-                            optimal_min = [opt_range['optimal_min']] * len(time_list)[::-1]
-                            # Crear traza principal
-                            trace = go.Scatter(
-                                x=device_df['time'],
-                                y=device_df[sensor],
-                                mode='lines+markers',
-                                name=title,
-                                line=dict(color='rgb(0, 123, 255)', width=2),
-                                fill='tozeroy',
-                                fillcolor="rgba(0, 255, 0, 0.2)"
-                            )
-                            # Añadir área de rango óptimo
+                            optimal_min = [opt_range['optimal_min']] * len(time_list)
+
                             optimal_area = go.Scatter(
                                 x=time_list + time_list[::-1],
                                 y=optimal_max + optimal_min[::-1],
@@ -511,6 +501,14 @@ def main():
                             )
                             # Crear figura individual
                             fig = go.Figure()
+                            # Definir la traza para el sensor actual
+                            trace = go.Scatter(
+                                x=device_df['time'],
+                                y=device_df[sensor],
+                                mode='lines+markers',
+                                name=title,
+                                line=dict(color='rgb(0, 123, 255)', width=2)
+                            )
                             fig.add_trace(trace)
                             fig.add_trace(optimal_area)
                             # Configurar diseño
