@@ -21,14 +21,14 @@ class SensorData(BaseModel):
     time: str = None  # Opcional, puedes dejarlo vacío
 
 @app.post("/api/sensores")
-async def recibir_datos(data: SensorData):
-    # Si no viene 'time', usa la hora actual del servidor
+async def recibir_datos(data: SensorData, request: Request):
+    ip = request.client.host
     from datetime import datetime
     time_value = data.time or datetime.utcnow().isoformat()
 
     query = text("""
-        INSERT INTO sensors3 (device, lux, nh3, hs, h, t, time)
-        VALUES (:device, :lux, :nh3, :hs, :h, :t, :time)
+        INSERT INTO sensors3 (device, lux, nh3, hs, h, t, time, ip)
+        VALUES (:device, :lux, :nh3, :hs, :h, :t, :time, :ip)
     """)
     with engine.connect() as conn:
         conn.execute(query, {
@@ -38,7 +38,8 @@ async def recibir_datos(data: SensorData):
             "hs": data.hs,
             "h": data.h,
             "t": data.t,
-            "time": time_value
+            "time": time_value,
+            "ip": ip
         })
         conn.commit()
     return {"status": "ok", "msg": "Dato guardado correctamente"}
