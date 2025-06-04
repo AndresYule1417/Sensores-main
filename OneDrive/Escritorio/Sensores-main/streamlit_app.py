@@ -94,12 +94,9 @@ def get_latest_data():
         try:
             query = """
             SELECT *
-            FROM (
-                SELECT *, ROW_NUMBER() OVER (PARTITION BY device ORDER BY time DESC) AS row_num
-                FROM sensors3
-            ) subquery
-            WHERE row_num <= 12
-            ORDER BY device, time ASC
+            FROM sensors3
+            ORDER BY time DESC
+            LIMIT 30
             """
             df = pd.read_sql_query(query, conn)
             conn.close()
