@@ -17,11 +17,14 @@ st.markdown('<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.1
 
 # Función para cargar estilos CSS locales
 def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    try:
+        with open(file_name) as f:
+            st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    except FileNotFoundError:
+        st.warning("No se encontró el archivo de estilos CSS.")
 
 # Cargar estilos CSS
-local_css("styles.css")
+local_css(os.path.join(os.path.dirname(__file__), "styles.css"))
 
 # Configuración de rangos óptimos para sensores de galpón avícola
 SENSOR_RANGES = {
