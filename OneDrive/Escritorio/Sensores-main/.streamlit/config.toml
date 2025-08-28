@@ -1,0 +1,13 @@
+[theme]
+base = "light"  # Tema claro
+backgroundColor = "#e8f5e9"  # Verde suave, como un ambiente agrícola
+primaryColor = "#43a047"  # Verde oscuro para botones y elementos interactivos
+secondaryBackgroundColor = "#c8e6c9"  # Verde claro para fondos secundarios
+textColor = "#212121"  # Texto oscuro para contraste
+font = "Roboto"  # Fuente moderna y legible
+
+[theme.primaryColors]
+success = "#4caf50"  # Verde para indicar estados óptimos
+warning = "#ff9800"  # Naranja para advertencias
+error = "#d32f2f"  # Rojo para errores críticos
+info = "#0288d1"  # Azul para información general
