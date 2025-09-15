@@ -242,7 +242,7 @@ st.sidebar.markdown('<h4>⏱️ Rango de tiempo para visualización</h4>', unsaf
 # Selectbox debajo del título
 time_range = st.sidebar.selectbox(
     "",
-    ["Últimos 5 minutos", "Últimos 15 minutos", "Últimos 30 minutos", "Última hora", "Últimas 6 horas", "Últimas 12 horas", "Últimas 24 horas"],
+    ["Últimos 5 minutos", "Últimos 15 minutos", "Últimos 30 minutos", "Última hora", "Últimas 6 horas", "Últimas 12 horas", "Últimas 24 horas", "Últimos 7 días", "Últimos 30 días", "Todos los datos"],
     index=3
 )
 # Filtrar los datos según la selección de tiempo
@@ -270,6 +270,12 @@ def filter_data_by_time(df, time_range):
         start_time = now - pd.Timedelta(hours=12)
     elif time_range == "Últimas 24 horas":
         start_time = now - pd.Timedelta(hours=24)
+    elif time_range == "Últimos 7 días":
+        start_time = now - pd.Timedelta(days=7)
+    elif time_range == "Últimos 30 días":
+        start_time = now - pd.Timedelta(days=30)
+    elif time_range == "Todos los datos":
+        start_time = None
     else:
         start_time = None
 
@@ -319,25 +325,28 @@ selected_devices = st.sidebar.multiselect(
 )
 # Recomendaciones dinámicas por módulo
 with st.sidebar.expander("### Recomendaciones por Módulo 🛠️"):
-    for device in selected_devices:
-        device_df = df[df['device'] == device]
-        if not device_df.empty:
-            recommendations = []
-            for sensor, details in SENSOR_RANGES.items():
-                last_value = device_df[sensor].iloc[-1]
-                if last_value < details['optimal_min']:
-                    deviation = details['optimal_min'] - last_value
-                    recommendations.append(f"⚠️ {sensor.upper()}: Aumentar {details['description'].split(' ')[0]} en al menos {deviation:.2f} {details['unit']}.")
-                elif last_value > details['optimal_max']:
-                    deviation = last_value - details['optimal_max']
-                    recommendations.append(f"⚠️ {sensor.upper()}: Reducir {details['description'].split(' ')[0]} en al menos {deviation:.2f} {details['unit']}.")
-            
-            if recommendations:
-                st.markdown(f"**{device}:**")
-                for rec in recommendations:
-                    st.markdown(f"- {rec}")
-            else:
-                st.markdown(f"**{device}:** ✅ Todo en orden.")
+    if df.empty or 'device' not in df.columns:
+        st.warning("No hay datos disponibles para mostrar recomendaciones.")
+    else:
+        for device in selected_devices:
+            device_df = df[df['device'] == device]
+            if not device_df.empty:
+                recommendations = []
+                for sensor, details in SENSOR_RANGES.items():
+                    last_value = device_df[sensor].iloc[-1]
+                    if last_value < details['optimal_min']:
+                        deviation = details['optimal_min'] - last_value
+                        recommendations.append(f"⚠️ {sensor.upper()}: Aumentar {details['description'].split(' ')[0]} en al menos {deviation:.2f} {details['unit']}.")
+                    elif last_value > details['optimal_max']:
+                        deviation = last_value - details['optimal_max']
+                        recommendations.append(f"⚠️ {sensor.upper()}: Reducir {details['description'].split(' ')[0]} en al menos {deviation:.2f} {details['unit']}.")
+                
+                if recommendations:
+                    st.markdown(f"**{device}:**")
+                    for rec in recommendations:
+                        st.markdown(f"- {rec}")
+                else:
+                    st.markdown(f"**{device}:** ✅ Todo en orden.")
 
 # Botón de actualización manual
 if st.sidebar.button("Actualizar datos 🔄"):
@@ -383,93 +392,101 @@ def main():
 
             # Resumen del Galpón en tarjetas horizontales
             st.markdown("### Resumen del Galpón 📊")
-            cols = st.columns(3)  # Crear tres columnas para las tarjetas
+            
+            # Verificar que los datos existen antes de calcular promedios
+            if not df.empty and all(col in df.columns for col in ['t', 'h', 'nh3']):
+                cols = st.columns(3)  # Crear tres columnas para las tarjetas
 
-            # Tarjeta de Temperatura Promedio
-            with cols[0]:
-                temp_mean = df['t'].mean()
-                temp_trend = "↑" if temp_mean > SENSOR_RANGES['t']['optimal_max'] else "↓" if temp_mean < SENSOR_RANGES['t']['optimal_min'] else "→"
-                st.markdown(f"""
-                <div class="summary-card" style="
-                    border: 1px solid #4CAF50;
-                    border-radius: 10px;
-                    padding: 15px;
-                    background-color: rgba(240, 240, 240, 0.8);
-                    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-                ">
-                    <h4 style="margin-bottom: 5px;">🌡️ <strong>Temperatura Promedio</strong></h4>
-                    <p style="margin: 0; font-size: 16px;">{temp_mean:.2f} °C</p>
-                    <p style="margin: 0; font-size: 14px; color: gray;">Tendencia: {temp_trend}</p>
-                </div>
-                """, unsafe_allow_html=True)
+                # Tarjeta de Temperatura Promedio
+                with cols[0]:
+                    temp_mean = df['t'].mean()
+                    temp_trend = "↑" if temp_mean > SENSOR_RANGES['t']['optimal_max'] else "↓" if temp_mean < SENSOR_RANGES['t']['optimal_min'] else "→"
+                    st.markdown(f"""
+                    <div class="summary-card" style="
+                        border: 1px solid #4CAF50;
+                        border-radius: 10px;
+                        padding: 15px;
+                        background-color: rgba(240, 240, 240, 0.8);
+                        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+                    ">
+                        <h4 style="margin-bottom: 5px;">🌡️ <strong>Temperatura Promedio</strong></h4>
+                        <p style="margin: 0; font-size: 16px;">{temp_mean:.2f} °C</p>
+                        <p style="margin: 0; font-size: 14px; color: gray;">Tendencia: {temp_trend}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
 
-            # Tarjeta de Humedad Promedio
-            with cols[1]:
-                humidity_mean = df['h'].mean()
-                humidity_trend = "↑" if humidity_mean > SENSOR_RANGES['h']['optimal_max'] else "↓" if humidity_mean < SENSOR_RANGES['h']['optimal_min'] else "→"
-                st.markdown(f"""
-                <div class="summary-card" style="
-                    border: 1px solid #2196F3;
-                    border-radius: 10px;
-                    padding: 15px;
-                    background-color: rgba(240, 240, 240, 0.8);
-                    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-                ">
-                    <h4 style="margin-bottom: 5px;">💧 <strong>Humedad Promedio</strong></h4>
-                    <p style="margin: 0; font-size: 16px;">{humidity_mean:.2f} %</p>
-                    <p style="margin: 0; font-size: 14px; color: gray;">Tendencia: {humidity_trend}</p>
-                </div>
-                """, unsafe_allow_html=True)
+                # Tarjeta de Humedad Promedio
+                with cols[1]:
+                    humidity_mean = df['h'].mean()
+                    humidity_trend = "↑" if humidity_mean > SENSOR_RANGES['h']['optimal_max'] else "↓" if humidity_mean < SENSOR_RANGES['h']['optimal_min'] else "→"
+                    st.markdown(f"""
+                    <div class="summary-card" style="
+                        border: 1px solid #2196F3;
+                        border-radius: 10px;
+                        padding: 15px;
+                        background-color: rgba(240, 240, 240, 0.8);
+                        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+                    ">
+                        <h4 style="margin-bottom: 5px;">💧 <strong>Humedad Promedio</strong></h4>
+                        <p style="margin: 0; font-size: 16px;">{humidity_mean:.2f} %</p>
+                        <p style="margin: 0; font-size: 14px; color: gray;">Tendencia: {humidity_trend}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
 
-            # Tarjeta de Amoniaco Promedio
-            with cols[2]:
-                nh3_mean = df['nh3'].mean()
-                nh3_trend = "↑" if nh3_mean > SENSOR_RANGES['nh3']['optimal_max'] else "↓" if nh3_mean < SENSOR_RANGES['nh3']['optimal_min'] else "→"
-                st.markdown(f"""
-                <div class="summary-card" style="
-                    border: 1px solid #FF5722;
-                    border-radius: 10px;
-                    padding: 15px;
-                    background-color: rgba(240, 240, 240, 0.8);
-                    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-                ">
-                    <h4 style="margin-bottom: 5px;">⚠️ <strong>Amoniaco Promedio</strong></h4>
-                    <p style="margin: 0; font-size: 16px;">{nh3_mean:.2f} ppm</p>
-                    <p style="margin: 0; font-size: 14px; color: gray;">Tendencia: {nh3_trend}</p>
-                </div>
-                """, unsafe_allow_html=True) 
+                # Tarjeta de Amoniaco Promedio
+                with cols[2]:
+                    nh3_mean = df['nh3'].mean()
+                    nh3_trend = "↑" if nh3_mean > SENSOR_RANGES['nh3']['optimal_max'] else "↓" if nh3_mean < SENSOR_RANGES['nh3']['optimal_min'] else "→"
+                    st.markdown(f"""
+                    <div class="summary-card" style="
+                        border: 1px solid #FF5722;
+                        border-radius: 10px;
+                        padding: 15px;
+                        background-color: rgba(240, 240, 240, 0.8);
+                        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+                    ">
+                        <h4 style="margin-bottom: 5px;">⚠️ <strong>Amoniaco Promedio</strong></h4>
+                        <p style="margin: 0; font-size: 16px;">{nh3_mean:.2f} ppm</p>
+                        <p style="margin: 0; font-size: 14px; color: gray;">Tendencia: {nh3_trend}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+            else:
+                st.warning("No hay suficientes datos para mostrar el resumen del galpón.")
 
             # Lista de dispositivos
             devices = selected_devices
             
 #|||||||||||||||||||||----- Mostrar gráficas y tabla para cada dispositivo-----|||||||||||||||||
-        for device in devices:
-            device_df = df[df['device'] == device]
-            if not device_df.empty:
-                # Título del módulo
-                st.markdown(f"""
-                <h2 style='color: #43a047; font-size: 24px; font-weight: bold;'>
-                    <i class="fas fa-microchip"></i> Módulo: {device}
-                </h2>
-                """, unsafe_allow_html=True)
+        if df.empty or 'device' not in df.columns:
+            st.error("No se pueden mostrar los datos de los dispositivos. Verifica la conexión a la base de datos.")
+        else:
+            for device in devices:
+                device_df = df[df['device'] == device]
+                if not device_df.empty:
+                    # Título del módulo
+                    st.markdown(f"""
+                    <h2 style='color: #43a047; font-size: 24px; font-weight: bold;'>
+                        <i class="fas fa-microchip"></i> Módulo: {device}
+                    </h2>
+                    """, unsafe_allow_html=True)
 
-                # Llamar a la función para crear la tabla con Sparklines
-                sensors_config = [
-                    ('lux', 'Luminosidad', 140, 60),
-                    ('nh3', 'Amoniaco', 25, 5),
-                    ('hs', 'Sulfuro de Hidrógeno', 400, 0),
-                    ('h', 'Humedad', 100, 70),
-                    ('t', 'Temperatura', 24, 18)
-                ]
-                create_table_with_sparklines(device_df, sensors_config, SENSOR_RANGES)
+                    # Llamar a la función para crear la tabla con Sparklines
+                    sensors_config = [
+                        ('lux', 'Luminosidad', 140, 60),
+                        ('nh3', 'Amoniaco', 25, 5),
+                        ('hs', 'Sulfuro de Hidrógeno', 400, 0),
+                        ('h', 'Humedad', 100, 70),
+                        ('t', 'Temperatura', 24, 18)
+                    ]
+                    create_table_with_sparklines(device_df, sensors_config, SENSOR_RANGES)
 
-                # Botón para desplegar/replegar la sección de pestañas
-                if f"{device}_tabs_expanded" not in st.session_state:
-                    st.session_state[f"{device}_tabs_expanded"] = False
-                toggle_button_label = "Ocultar Detalles" if st.session_state[f"{device}_tabs_expanded"] else "Ver Detalles"
-                toggle_button_color = "red" if st.session_state[f"{device}_tabs_expanded"] else "green"
-                if st.button(f"{toggle_button_label}", key=f"toggle_tabs_{device}"):
-                    st.session_state[f"{device}_tabs_expanded"] = not st.session_state[f"{device}_tabs_expanded"]
+                    # Botón para desplegar/replegar la sección de pestañas
+                    if f"{device}_tabs_expanded" not in st.session_state:
+                        st.session_state[f"{device}_tabs_expanded"] = False
+                    toggle_button_label = "Ocultar Detalles" if st.session_state[f"{device}_tabs_expanded"] else "Ver Detalles"
+                    toggle_button_color = "red" if st.session_state[f"{device}_tabs_expanded"] else "green"
+                    if st.button(f"{toggle_button_label}", key=f"toggle_tabs_{device}"):
+                        st.session_state[f"{device}_tabs_expanded"] = not st.session_state[f"{device}_tabs_expanded"]
 
                 # Mostrar la sección de pestañas si está expandida
                 if st.session_state[f"{device}_tabs_expanded"]:
