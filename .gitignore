@@ -59,3 +59,6 @@ Thumbs.db
 
 # OneDrive y carpetas de usuario
 /OneDrive*/
+
+# Backups locales (no subir a GitHub)
+backups_local/

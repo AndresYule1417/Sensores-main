@@ -44,6 +44,8 @@ async def recibir_datos(data: SensorData, request: Request):
         conn.commit()
     return {"status": "ok", "msg": "Dato guardado correctamente"}
 
+        
+
 # Endpoint de prueba
 @app.get("/")
 def root():

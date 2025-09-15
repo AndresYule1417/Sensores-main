@@ -4,5 +4,3 @@ numpy==1.26.3
 sqlalchemy==2.0.27
 psycopg2-binary==2.9.9
 plotly==5.18.0
-# matplotlib no es necesario para el dashboard actual
-# min_tabla es un módulo local, no requiere instalación
