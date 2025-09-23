@@ -46,7 +46,9 @@ API_BASE_URL = os.getenv("API_BASE_URL", "http://192.168.20.33:8000")
 # - NH3: 0-5 ppm (flotante)
 # - H2S: 0-5 ppm (flotante)
 # - Timestamp: segundos relativos del ESP8266
-DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"  # Configurable via env vars
+
+# 🔄 AUTO-DEMO MODE: Se activa automáticamente si no puede conectar al backend
+DEMO_MODE = os.getenv("DEMO_MODE", "true").lower() == "true"  # Default a TRUE para Streamlit Cloud
 
 # ============================
 # AUTENTICACIÓN SIMPLIFICADA
