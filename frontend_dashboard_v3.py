@@ -4,6 +4,7 @@
 🐓 Sistema de Monitoreo Galpón Avícola - Dashboard Frontend V3
 Versión 3.0 - Con modo demostración completo
 Universidad Cooperativa de Colombia - Campus Ibagué
+Optimizado para Streamlit Cloud - Septiembre 2025
 """
 
 import streamlit as st

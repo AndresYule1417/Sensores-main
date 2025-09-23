@@ -1,0 +1,2 @@
+# Dependencias del sistema para Streamlit Cloud
+# Si se necesitan paquetes adicionales del sistema, agregarlos aquí
