@@ -29,7 +29,8 @@ st.set_page_config(
 )
 
 # ✅ BACKEND CONFIRMADO: ESP8266 + MQTT + FastAPI + SQLite
-API_BASE_URL = "http://192.168.20.33:8000"
+# 🌐 Configuración para deployment (local y producción)
+API_BASE_URL = os.getenv("API_BASE_URL", "http://192.168.20.33:8000")
 
 # 🎯 ARQUITECTURA CONFIRMADA POR BACKEND TEAM:
 # ESP8266 → MQTT (cada 5s) → Listener Python → SQLite → FastAPI → Frontend
@@ -44,7 +45,7 @@ API_BASE_URL = "http://192.168.20.33:8000"
 # - NH3: 0-5 ppm (flotante)
 # - H2S: 0-5 ppm (flotante)
 # - Timestamp: segundos relativos del ESP8266
-DEMO_MODE = False  # Sistema real ESP8266 funcionando
+DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"  # Configurable via env vars
 
 # ============================
 # AUTENTICACIÓN SIMPLIFICADA
