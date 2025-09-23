@@ -1,52 +1,83 @@
-# 🐔 Sistema Galpón Avícola UCC - .gitignore
+# � .gitignore para Proyecto Galpón IoT UCC - FastAPI + Streamlit
 
-# Entornos virtuales Python
-venv/
+# Archivos Python temporales
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Entornos virtuales
 env/
+venv/
 ENV/
+env.bak/
+venv.bak/
 .venv/
 .ENV/
-__pycache__/
+
+# Base de datos SQLite
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Logs del sistema
+logs/*.log
+*.log
+galpon*.log
+systemd*.log
 
 # Archivos de configuración sensibles
+config/*.env
+config/.env
 .env
 .env.local
 .env.production
 *.key
 *.pem
-
-# Python
-*.py[cod]
-*.so
-*.egg
-*.egg-info/
-dist/
-build/
-.eggs/
-
-# Logs del sistema
-logs/
-*.log
-galpon*.log
-systemd*.log
+*.crt
 
 # Streamlit
 .streamlit/secrets.toml
 .streamlit/config.toml
 
-# Base de datos locales y backups
-*.sql
-*.db
-*.sqlite
-backups_local/
-backup_*.sql
-
-# Archivos de sistema
+# Archivos temporales del sistema
 .DS_Store
 Thumbs.db
+*.tmp
+*.temp
 *.bak
 *.swp
-*.tmp
+*.swo
+*~
+
+# VS Code / IDEs
+.vscode/
+.vs/
+*.swp
+*.swo
+
+# Archivos de distribución Python
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Archivos de backup
+backup_obsoletos/
+
+# Documentos temporales
+*.docx
+*.xlsx
+~$*
+
+# Testing
+test_data/
+*.test
+
+# Node modules (si se usa)
+node_modules/
 
 # Certificados y túneles
 *.json
