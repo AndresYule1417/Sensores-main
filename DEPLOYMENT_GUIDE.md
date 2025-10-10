@@ -1,5 +1,20 @@
 # 🚀 GUÍA DE DEPLOYMENT PARA STREAMLIT
 
+---
+
+## ⚠️ **ADVERTENCIA IMPORTANTE**
+
+### 🚨 ESTE ES UN PROYECTO PYTHON/STREAMLIT
+
+**❌ NO USAR VERCEL** - Vercel es para proyectos React/Node.js, NO para Streamlit.
+
+**✅ USAR STREAMLIT CLOUD** - Es la plataforma diseñada para este tipo de proyectos.
+
+¿Tienes un error de Vercel con React y `react-day-picker`? 
+→ Lee: [docs/NO_USAR_VERCEL.md](docs/NO_USAR_VERCEL.md) y [docs/SOLUCION_ERROR_VERCEL_REACT.md](docs/SOLUCION_ERROR_VERCEL_REACT.md)
+
+---
+
 ## 🌐 **Opción 1: Streamlit Cloud (RECOMENDADA)**
 
 ### ✅ **Paso 1: Preparar el repositorio**
@@ -24,9 +39,20 @@ DEMO_MODE = "false"
 
 ---
 
-## 🔄 **Opción 2: Vercel con FastAPI Wrapper**
+## 🔄 **Opción 2: Vercel (⚠️ NO RECOMENDADO PARA STREAMLIT)**
 
-### 📁 **Estructura para Vercel:**
+### ⚠️ **ADVERTENCIA: VERCEL NO ES COMPATIBLE CON STREAMLIT**
+
+**NO intentes deployar este proyecto en Vercel** porque:
+- ❌ Vercel usa Node.js runtime, Streamlit requiere Python
+- ❌ Vercel es stateless/serverless, Streamlit necesita sesiones persistentes
+- ❌ Streamlit usa WebSockets para tiempo real, incompatible con Vercel
+- ❌ La arquitectura es fundamentalmente incompatible
+
+**Si tienes un error de Vercel:** Probablemente estás deployando el proyecto equivocado.
+→ Lee: [docs/NO_USAR_VERCEL.md](docs/NO_USAR_VERCEL.md)
+
+### 📁 **Por completitud: Estructura teórica (NO USAR)**
 ```
 vercel-app/
 ├── api/
@@ -36,7 +62,10 @@ vercel-app/
 └── main.py              # Entry point
 ```
 
-### ⚙️ **Configuración necesaria:**
+**NOTA:** Esta configuración es compleja, propensa a errores, y NO recomendada.
+**USAR STREAMLIT CLOUD EN SU LUGAR.**
+
+### ⚙️ **Configuración teórica (SOLO REFERENCIA):**
 
 1. **vercel.json:**
 ```json
@@ -67,9 +96,12 @@ app = FastAPI()
 @app.get("/")
 def run_streamlit():
     # Ejecutar Streamlit como subprocess
-    # NOTA: Esto es complejo y no recomendado
+    # NOTA: Esto NO funciona correctamente en Vercel
+    # NO USAR - Solo referencia teórica
     pass
 ```
+
+**⚠️ ESTE CÓDIGO NO FUNCIONA EN PRODUCCIÓN.**
 
 ---
 
@@ -90,13 +122,25 @@ def run_streamlit():
 
 ## ⚡ **RECOMENDACIÓN FINAL**
 
-**USAR STREAMLIT CLOUD** porque:
+### 🎯 **USAR STREAMLIT CLOUD (Opción 1)**
+
+**STREAMLIT CLOUD es la ÚNICA opción recomendada** porque:
 - ✅ Diseñado específicamente para Streamlit
 - ✅ Deployment automático desde GitHub
 - ✅ SSL/HTTPS gratis
 - ✅ Variables de entorno fáciles
 - ✅ Logs y monitoreo incluidos
 - ✅ 100% compatible con tu código actual
+- ✅ GRATIS para proyectos públicos
+
+### ❌ **NO USAR VERCEL**
+
+Vercel es excelente para React/Next.js/Node.js, pero **NO es compatible con Streamlit**.
+
+Si intentaste usar Vercel y obtuviste un error de `npm` o `react-day-picker`:
+- 🔍 Probablemente estás deployando el proyecto equivocado
+- 📖 Lee: [docs/NO_USAR_VERCEL.md](docs/NO_USAR_VERCEL.md)
+- 🛠️ Solución: [docs/SOLUCION_ERROR_VERCEL_REACT.md](docs/SOLUCION_ERROR_VERCEL_REACT.md)
 
 **URL final será algo como:**
 `https://galpon-avicola-ucc.streamlit.app`
