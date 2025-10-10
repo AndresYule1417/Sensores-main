@@ -1,0 +1,9 @@
+# ⚠️ ESTE PROYECTO NO ES COMPATIBLE CON VERCEL
+# Este es un proyecto Python/Streamlit que debe deployarse en Streamlit Cloud
+# Ver: DEPLOYMENT_GUIDE.md
+
+# Ignorar todo para evitar deployment accidental en Vercel
+*
+!docs/NO_USAR_VERCEL.md
+!docs/SOLUCION_ERROR_VERCEL_REACT.md
+!DEPLOYMENT_GUIDE.md

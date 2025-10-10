@@ -4,7 +4,20 @@
 
 ![ESP8266](https://img.shields.io/badge/ESP8266-IoT-red) ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green) ![Streamlit](https://img.shields.io/badge/Streamlit-Frontend-blue) ![SQLite](https://img.shields.io/badge/SQLite-Database-orange)
 
+---
 
+## ⚠️ IMPORTANTE: DEPLOYMENT
+
+**Este es un proyecto Python/Streamlit**
+
+✅ **DEPLOYAR EN:** [Streamlit Cloud](https://streamlit.io/cloud)  
+❌ **NO USAR:** Vercel (incompatible con Streamlit)
+
+¿Error de Vercel con `react-day-picker`? → [Lee esto](docs/NO_USAR_VERCEL.md)
+
+📖 **Guía completa:** [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)
+
+---
 
 **Sistema completo de monitoreo en tiempo real para galpones avícolas usando ESP8266, MQTT, FastAPI y Streamlit**## 🚀 Inicio Rápido
 
