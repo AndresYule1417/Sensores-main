@@ -1,0 +1,18 @@
+[Unit]
+Description=FastAPI Backend - Galpón UCC
+After=network.target servidor_tcp.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=innovasic
+WorkingDirectory=/home/innovasic/galpon/raspberry_backend
+Environment="PATH=/home/innovasic/galpon/raspberry_backend/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ExecStart=/home/innovasic/galpon/raspberry_backend/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=10
+StandardOutput=append:/home/innovasic/galpon/logs/fastapi.log
+StandardError=append:/home/innovasic/galpon/logs/fastapi_error.log
+
+[Install]
+WantedBy=multi-user.target

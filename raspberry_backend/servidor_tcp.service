@@ -1,0 +1,18 @@
+[Unit]
+Description=Servidor TCP ESP8266 - Galpón UCC
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=innovasic
+WorkingDirectory=/home/innovasic/galpon/AppIoTEsp8266-UCC-main/Servidor
+Environment="PATH=/home/innovasic/galpon/AppIoTEsp8266-UCC-main/Servidor/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ExecStart=/home/innovasic/galpon/AppIoTEsp8266-UCC-main/Servidor/venv/bin/python3 /home/innovasic/galpon/AppIoTEsp8266-UCC-main/Servidor/Servidor.py
+Restart=always
+RestartSec=10
+StandardOutput=append:/home/innovasic/galpon/logs/servidor_tcp.log
+StandardError=append:/home/innovasic/galpon/logs/servidor_tcp_error.log
+
+[Install]
+WantedBy=multi-user.target

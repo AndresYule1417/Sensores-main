@@ -8,7 +8,10 @@ if os.name == 'nt':  # Windows
     # Usar la ruta relativa en Windows
     SQLALCHEMY_DATABASE_URL = "sqlite:///../data/galpon_avicultura.db"
 else:  # Linux/Raspberry Pi
-    SQLALCHEMY_DATABASE_URL = "sqlite:////home/innovasic/galpon/data/galpon.db"
+    # Crear carpeta data si no existe
+    data_dir = "/home/innovasic/galpon/data"
+    os.makedirs(data_dir, exist_ok=True)
+    SQLALCHEMY_DATABASE_URL = f"sqlite:///{data_dir}/galpon.db"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, 

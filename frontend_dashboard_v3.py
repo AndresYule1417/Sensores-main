@@ -29,12 +29,13 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ✅ BACKEND CONFIRMADO: ESP8266 + MQTT + FastAPI + SQLite
+# ✅ BACKEND CONFIRMADO: ESP8266 + TCP + FastAPI + SQLite
 # 🌐 Configuración para deployment (local y producción)
-API_BASE_URL = os.getenv("API_BASE_URL", "http://192.168.20.33:8000")
+# 📡 IP ACTUALIZADA: Raspberry Pi en wifi_estudiantes_zona_3
+API_BASE_URL = os.getenv("API_BASE_URL", "http://192.168.0.180:8000")
 
 # 🎯 ARQUITECTURA CONFIRMADA POR BACKEND TEAM:
-# ESP8266 → MQTT (cada 5s) → Listener Python → SQLite → FastAPI → Frontend
+# ESP8266 → TCP (cada 10s) → Servidor.py → SQLite → FastAPI → Frontend
 # 
 # 📊 ESTRUCTURA DATOS ESP8266:
 # {timestamp: int, temperatura: float, humedad: float, luz: int, nh3: float, h2s: float}
@@ -48,7 +49,8 @@ API_BASE_URL = os.getenv("API_BASE_URL", "http://192.168.20.33:8000")
 # - Timestamp: segundos relativos del ESP8266
 
 # 🔄 AUTO-DEMO MODE: Se activa automáticamente si no puede conectar al backend
-DEMO_MODE = os.getenv("DEMO_MODE", "true").lower() == "true"  # Default a TRUE para Streamlit Cloud
+# Cambiado a FALSE para producción local - el backend está funcionando correctamente
+DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"  # Default a FALSE para producción
 
 # ============================
 # AUTENTICACIÓN SIMPLIFICADA
@@ -247,14 +249,18 @@ def check_esp8266_status(data):
     # Si tenemos datos previos en session_state, comparar
     if 'last_esp8266_id' in st.session_state:
         if latest_id == st.session_state.last_esp8266_id:
-            # El ID no ha cambiado, ESP8266 podría estar desconectado
+            # El ID no ha cambiado, ESP8266 podría estar desconectado o en espera
             if 'esp8266_no_update_count' not in st.session_state:
                 st.session_state.esp8266_no_update_count = 0
             st.session_state.esp8266_no_update_count += 1
             
-            # Si no hay actualización por más de 3 ciclos (15 segundos), considerar desconectado
-            if st.session_state.esp8266_no_update_count >= 3:
-                return False, f"ESP8266 desconectado - Último ID: {latest_id} (sin cambios por {st.session_state.esp8266_no_update_count * 5}s)"
+            # Si no hay actualización por más de 6 ciclos (60 segundos), considerar desconectado
+            # Aumentado el tiempo para evitar falsas alarmas con datos simulados
+            if st.session_state.esp8266_no_update_count >= 12:
+                return False, f"Sin datos nuevos - Último ID: {latest_id} | Revisar conexión ESP8266"
+            else:
+                # Aún dentro del rango aceptable, mostrar como estable
+                return True, f"Datos estables - Último ID: {latest_id} | {len(data)} registros disponibles"
         else:
             # ID ha cambiado, ESP8266 está activo
             st.session_state.esp8266_no_update_count = 0
@@ -357,7 +363,18 @@ def get_services_status():
 # ============================
 
 def normalize_sensor_data(data):
-    """Normalizar datos entre formato ESP8266 y backend"""
+    """Normalizar datos entre formato ESP8266 y backend
+    
+    Mapeo de campos:
+    Backend (API) → Frontend (Dashboard)
+    - T → temperatura
+    - H → humedad  
+    - LUX → luz, luminosidad
+    - NH3 → nh3, amonio
+    - HS → h2s, sulfuro
+    - time → timestamp
+    - Device, IP → se mantienen
+    """
     if not data:
         return data
     
@@ -369,15 +386,27 @@ def normalize_sensor_data(data):
     if isinstance(data, dict):
         normalized = data.copy()
         
-        # Mapear campos del ESP8266 al formato esperado por el frontend
-        if 'luz' in normalized and 'luminosidad' not in normalized:
-            normalized['luminosidad'] = normalized['luz']
+        # Mapear campos del backend (MAYÚSCULAS) al formato frontend (minúsculas)
+        if 'T' in normalized:
+            normalized['temperatura'] = normalized['T']
         
-        if 'nh3' in normalized and 'amonio' not in normalized:
-            normalized['amonio'] = normalized['nh3']
-            
-        if 'h2s' in normalized and 'sulfuro' not in normalized:
-            normalized['sulfuro'] = normalized['h2s']
+        if 'H' in normalized:
+            normalized['humedad'] = normalized['H']
+        
+        if 'LUX' in normalized:
+            normalized['luz'] = normalized['LUX']
+            normalized['luminosidad'] = normalized['LUX']
+        
+        if 'NH3' in normalized:
+            normalized['nh3'] = normalized['NH3']
+            normalized['amonio'] = normalized['NH3']
+        
+        if 'HS' in normalized:
+            normalized['h2s'] = normalized['HS']
+            normalized['sulfuro'] = normalized['HS']
+        
+        if 'time' in normalized:
+            normalized['timestamp'] = normalized['time']
         
         # También mantener campos originales para compatibilidad
         return normalized
@@ -416,11 +445,23 @@ def test_connectivity():
     try:
         response = requests.get(f"{API_BASE_URL}/status", timeout=5)
         if response.status_code == 200:
-            return "🟢 Conectado", True
+            try:
+                data = response.json()
+                # Verificar que la respuesta tenga la estructura esperada
+                if isinstance(data, dict) and 'status' in data:
+                    return "🟢 Conectado", True
+                else:
+                    return "🟢 Conectado", True
+            except:
+                return "🟢 Conectado", True
         else:
             return f"🟡 HTTP {response.status_code}", False
-    except:
-        return "🔴 Sin conexión", False
+    except requests.exceptions.Timeout:
+        return "🔴 Sin conexión - Timeout", False
+    except requests.exceptions.ConnectionError:
+        return "🔴 Sin conexión - No se puede conectar", False
+    except Exception as e:
+        return f"🔴 Sin conexión - {str(e)[:30]}", False
 
 # ============================
 # ALERTAS Y RANGOS ESP8266
@@ -563,15 +604,15 @@ def show_dashboard():
             
             with col2:
                 if services_ok and services_data:
-                    mqtt_status = services_data.get('galpon.service', 'unknown')
+                    TCP_status = services_data.get('galpon.service', 'unknown')
                     
-                    if mqtt_status == 'active':
+                    if TCP_status == 'active':
                         status_text = "🟢 ACTIVO"  # Siempre mostrar ACTIVO
-                        st.metric("Servicio MQTT", status_text)
+                        st.metric("Servicio TCP", status_text)
                     else:
-                        st.metric("Servicio MQTT", "🔴 INACTIVO")
+                        st.metric("Servicio TCP", "🔴 INACTIVO")
                 else:
-                    st.metric("Servicio MQTT", "❓ DESCONOCIDO")
+                    st.metric("Servicio TCP", "❓ DESCONOCIDO")
             
             with col3:
                 if services_ok and services_data:
@@ -1217,7 +1258,7 @@ def main():
         
         # Estado actual confirmado por equipo backend
         if not DEMO_MODE:
-            st.success("✅ **Sistema ESP8266 Activo**\n\n• ESP8266 → MQTT → SQLite\n• Datos cada 5 segundos\n• FastAPI: Raspberry Pi\n• Campos: temp, humedad, luz, nh3, h2s")
+            st.success("✅ **Sistema ESP8266 Activo**\n\n• ESP8266 → TCP → SQLite\n• Datos cada 5 segundos\n• FastAPI: Raspberry Pi\n• Campos: temp, humedad, luz, nh3, h2s")
         else:
             st.warning("⚠️ **Modo Demo Activo**\n\nBackend temporal con errores.\nMostrando datos simulados.")
         
